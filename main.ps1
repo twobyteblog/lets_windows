@@ -25,23 +25,24 @@ $ErrorActionPreference = "Stop"
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
 # CloudFlare Token for Domain Control Validation (DCV).
-$cloudflareToken = ''
+$cloudflareToken = ""
 
 # Use Let's Encrypt's staging server rather then production.
 $certStaging = $false
 
 # Certificate password.
-$certPass = 'changeme'
+$certPass = "changeme"
 
 # Domain(s). If using hostname, you can automate using the $hostname variable.
 $hostname = $([System.Net.Dns]::GetHostEntry([string]"localhost").HostName)
 $certDomains = @($hostname, twobyte.blog, twobyte.ca)
 
 # Contact email address, for 
-$notifyEmail = 'alerts@twobyte.blog'
+$notifyEmail = "alerts@twobyte.blog"
 
-# Set Posh-ACME configuration location.
-$env:POSHACME_HOME = 'C:\scripts\lets_windows\config'
+# Posh-ACME configuration location. 
+# By default, this will be a 'config' folder located aloneside the script.
+$env:POSHACME_HOME = "$PSScriptRoot\config"
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
@@ -87,8 +88,6 @@ function Export-Base64Certificate {
 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 
-
-
 # If running on Windows 2016 or older, force the use of TLS 1.2.
 $OSVersion = (Get-CimInstance -ClassName Win32_OperatingSystem).Version
 
@@ -111,6 +110,7 @@ $pArgs = @{CFToken=$token}
 if ($certStaging) {
     Write-Host "Setting Let's Encrypt to staging server."
     Set-PAServer LE_STAGE
+    
 } else {
     Write-Host "Setting Let's Encrypt to production server."
     Set-PAServer LE_PROD
@@ -158,7 +158,7 @@ if ($Install) {
         Register-ScheduledTask $TaskName -Action $TaskAction -Trigger $TaskTrigger -User 'System' -Settings $TaskSettings -Desc $TaskDesc | Out-Null
 
     } else {
-            Write-Host "Certificate OK. Signing not required."
+            Write-Host "Certificate already exists. Skipping."
         }
 }
 
@@ -168,9 +168,7 @@ if ($Renew) {
 
     Write-Host "Starting certificate renewal process..."
 
-    if (Submit-Renewal -Verbose) {
-        # Nothing...
-    } else {
+    if ( -not (Submit-Renewal -Verbose)) {
         Write-Host "Certificate OK. Renewal not required."
     }
 }
@@ -247,7 +245,7 @@ if (Get-WindowsFeature | Where-Object { $_.Installed -eq $true -and $_.Name -eq 
 
         # Import certificate.
         Import-RDWebClientBrokerCert $Base64Cert
-        Publish-RDWebClientPackage -Type Production -Latest
+        
         } else {
             Write-Host "RDS: RDS Web Access certificate thumbprint matches, skipping."
         }
