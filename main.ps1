@@ -3,9 +3,8 @@
   Requests and installs a Let's Encrypt certificate on a Windows-based host. Includes creating a scheduled task for auto-renewing the certificate as required.
 
 .NOTES
-  Version:        1.1
-  Author:         Tyler Rasmussen
-  Creation Date:  Febraury 5th, 2025
+  Version:        1.0
+  Author:         twobyte.blog
   
 .EXAMPLE
   .\Certificate.ps1 -Install (Generates and installs new certificate.)
