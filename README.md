@@ -12,9 +12,9 @@ This script automates the deployment of Let's Encrypt certificates on Windows ho
 ## Prerequisites
 
 - PowerShell 5.1 or higher.
-- Ability to create Cloudflare API token.
+- Cloudflare access (to create API token).
 
-## Actions Performed by the Script
+## Actions Performed
 
 The script performs the following actions:
 
