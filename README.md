@@ -1,4 +1,4 @@
-# Let's Encrypt Certificate Deployment Script for Windows Hosts
+## Let's Encrypt Certificate Deployment Script for Windows Hosts
 
 This script automates the deployment of Let's Encrypt certificates on Windows hosts using [Posh-ACME](https://poshac.me/docs/latest/) and the Cloudflare plugin. In addition to generating the Let's Encrypt certificate, it also installs the new certificate in **Remote Desktop Services** and **Work Folders**.
 
