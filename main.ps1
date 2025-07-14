@@ -264,14 +264,17 @@ if (Get-WindowsFeature | Where-Object { $_.Installed -eq $true -and $_.Name -eq 
     $NewCert = Get-PACertificate $PrimaryDomain -ErrorAction Stop
 
     # Collect installed certificate thumbprint.
-    $CertThumbprint = netsh http show sslcert | Select-String -Pattern "Certificate Hash:\s*(\S+)" | ForEach-Object { $_.Matches.Groups[1].Value }
+    $Thumbprint = netsh http show sslcert | Select-String -Pattern "Certificate Hash:\s*(\S+)" | ForEach-Object { $_.Matches.Groups[1].Value }
 
-    if ($($NewCert.Thumbprint.ToString()) -eq $CertThumbprint) {
+    if ($($NewCert.Thumbprint.ToString()) -eq $Thumbprint) {
 
         try {
             # Refresh certificate installed for Work Folders.
+            $Thumbprint = ($NewCert.Thumbprint).Replace(" ", "").Trim()
+            $AppId = "{CE66697B-3AA0-49D1-BDBD-A25C8359FD5D}"
+
             netsh http delete sslcert ipport=0.0.0.0:443
-            netsh http add sslcert ipport:0.0.0.0:443 certhash=$($NewCert.Thumbprint) appid={CE66697B-3AA0-49D1-BDBD-A25C8359FD5D} certstorename=MY
+            netsh http add sslcert ipport=0.0.0.0:443 certhash=$Thumbprint appid=$AppId certstorename=MY
 
             # Restart Work Folders service.
             Restart-Service -Name FS-SyncShareService
