@@ -277,7 +277,7 @@ if (Get-WindowsFeature | Where-Object { $_.Installed -eq $true -and $_.Name -eq 
             netsh http add sslcert ipport=0.0.0.0:443 certhash=$Thumbprint appid=$AppId certstorename=MY
 
             # Restart Work Folders service.
-            Restart-Service -Name FS-SyncShareService
+            Restart-Service -Name SyncShareSvc
 
         } catch {
             Write-Error "Failed to successfully apply new Work Folders certificate: $_"
